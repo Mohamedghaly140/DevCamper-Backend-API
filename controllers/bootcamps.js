@@ -4,17 +4,42 @@ const Bootcamp = require('../models/Bootcamp');
 // @route    GET /api/v1/bootcamps
 // @access   Public
 exports.getBootcamps = (req, res, next) => {
-	res.status(200).json({ success: true, msg: 'Show all bootcamps' });
+	Bootcamp.find()
+		.then(data => {
+			res.status(200).json({
+				success: true,
+				count: data.length,
+				data: data,
+			});
+		})
+		.catch(err => {
+			res.status(400).json({
+				success: false,
+				msg: err.message,
+			});
+		});
 };
 
 // @desc     Get single bootcamp
 // @route    GET /api/v1/bootcamps/:id
 // @access   Public
 exports.getBootcamp = (req, res, next) => {
-	res.status(200).json({
-		success: true,
-		msg: `Show single bootcamp ${req.params.id}`,
-	});
+	Bootcamp.findById(req.params.id)
+		.then(data => {
+			if (!data) {
+				return res.status(400).json({
+					success: false,
+					data: 'bootcamp id dose not match any bootcamps',
+				});
+			}
+			res.status(200).json({ success: true, data: data });
+		})
+		.catch(err => {
+			res.status(400).json({
+				success: false,
+				msg: err.message,
+			});
+		});
 };
 
 // @desc     Create new bootcamp
@@ -37,18 +62,45 @@ exports.createtBootcamp = (req, res, next) => {
 // @route    PUT /api/v1/bootcamps/:id
 // @access   Private
 exports.updateBootcamp = (req, res, next) => {
-	res.status(200).json({
-		success: true,
-		msg: `update bootcamp ${req.params.id}`,
-	});
+	Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+		new: true,
+		runValidators: true,
+	})
+		.then(data => {
+			if (!data) {
+				return res.status(400).json({
+					success: false,
+					data: 'bootcamp id dose not match any bootcamps',
+				});
+			}
+			res.status(200).json({ success: true, data: data });
+		})
+		.catch(err => {
+			res.status(400).json({
+				success: false,
+				msg: err.message,
+			});
+		});
 };
 
 // @desc     Delete bootcamp
 // @route    DELETE /api/v1/bootcamps/:id
 // @access   Private
 exports.deleteBootcamp = (req, res, next) => {
-	res.status(200).json({
-		success: true,
-		msg: `delete bootcamp ${req.params.id}`,
-	});
+	Bootcamp.findByIdAndDelete(req.params.id)
+		.then(data => {
+			if (!data) {
+				return res.status(400).json({
+					success: false,
+					data: 'bootcamp id dose not match any bootcamps',
+				});
+			}
+			res.status(200).json({ success: true, data: data });
+		})
+		.catch(err => {
+			res.status(400).json({
+				success: false,
+				msg: err.message,
+			});
+		});
 };
