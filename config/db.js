@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const colors = require('colors');
 
 const connectDB = () => {
 	mongoose
@@ -8,9 +9,14 @@ const connectDB = () => {
 			useUnifiedTopology: true,
 			useFindAndModify: false,
 		})
-		.then(() => console.log('MongoDB Connected...'))
+		.then(() =>
+			console.log(
+				`MongoDB Connected: ${mongoose.connection.host}...`.cyan
+					.underline.bold
+			)
+		)
 		.catch(err => {
-			console.error(err.message);
+			console.error(`${err.message}`.red);
 			process.exit(1);
 		});
 };
