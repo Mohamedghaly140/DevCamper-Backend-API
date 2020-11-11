@@ -14,10 +14,7 @@ exports.getBootcamps = (req, res, next) => {
 			});
 		})
 		.catch(err => {
-			res.status(400).json({
-				success: false,
-				msg: err.message,
-			});
+			next(err);
 		});
 };
 
@@ -51,10 +48,7 @@ exports.createtBootcamp = (req, res, next) => {
 			res.status(201).json({ success: true, data: data });
 		})
 		.catch(err => {
-			res.status(400).json({
-				success: false,
-				msg: err.message,
-			});
+			next(err);
 		});
 };
 
@@ -78,10 +72,7 @@ exports.updateBootcamp = (req, res, next) => {
 			res.status(200).json({ success: true, data: data });
 		})
 		.catch(err => {
-			res.status(400).json({
-				success: false,
-				msg: err.message,
-			});
+			next(err);
 		});
 };
 
@@ -102,9 +93,6 @@ exports.deleteBootcamp = (req, res, next) => {
 			res.status(200).json({ success: true, data: data });
 		})
 		.catch(err => {
-			res.status(400).json({
-				success: false,
-				msg: err.message,
-			});
+			next(err);
 		});
 };
