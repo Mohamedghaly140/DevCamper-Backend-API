@@ -1,4 +1,5 @@
 const Bootcamp = require('../models/Bootcamp');
+const ErrorResponse = require('../utils/ErrorResponse');
 
 // @desc     Get all bootcamps
 // @route    GET /api/v1/bootcamps
@@ -27,18 +28,17 @@ exports.getBootcamp = (req, res, next) => {
 	Bootcamp.findById(req.params.id)
 		.then(data => {
 			if (!data) {
-				return res.status(400).json({
-					success: false,
-					data: 'bootcamp id dose not match any bootcamps',
-				});
+				return next(
+					new ErrorResponse(
+						`Bootcamp id ${req.params.id} dose not match any bootcamps in database`,
+						404
+					)
+				);
 			}
 			res.status(200).json({ success: true, data: data });
 		})
 		.catch(err => {
-			res.status(400).json({
-				success: false,
-				msg: err.message,
-			});
+			next(err);
 		});
 };
 
@@ -68,10 +68,12 @@ exports.updateBootcamp = (req, res, next) => {
 	})
 		.then(data => {
 			if (!data) {
-				return res.status(400).json({
-					success: false,
-					data: 'bootcamp id dose not match any bootcamps',
-				});
+				return next(
+					new ErrorResponse(
+						`Bootcamp id ${req.params.id} dose not match any bootcamps in database`,
+						404
+					)
+				);
 			}
 			res.status(200).json({ success: true, data: data });
 		})
@@ -90,10 +92,12 @@ exports.deleteBootcamp = (req, res, next) => {
 	Bootcamp.findByIdAndDelete(req.params.id)
 		.then(data => {
 			if (!data) {
-				return res.status(400).json({
-					success: false,
-					data: 'bootcamp id dose not match any bootcamps',
-				});
+				return next(
+					new ErrorResponse(
+						`Bootcamp id ${req.params.id} dose not match any bootcamps in database`,
+						404
+					)
+				);
 			}
 			res.status(200).json({ success: true, data: data });
 		})
