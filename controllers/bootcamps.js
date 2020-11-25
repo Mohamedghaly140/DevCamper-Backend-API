@@ -6,7 +6,44 @@ const geocoder = require('../utils/geocoder');
 // @route    GET /api/v1/bootcamps
 // @access   Public
 exports.getBootcamps = (req, res, next) => {
-	Bootcamp.find()
+	let query;
+
+	// Copy req.query
+	const reqQuery = { ...req.query };
+
+	// Field to exclude
+	const removeFields = ['select', 'sort'];
+
+	// loop over removeFields and delete them from reqQuery
+	removeFields.forEach(field => delete reqQuery[field]);
+
+	let queryStr = JSON.stringify(reqQuery);
+
+	queryStr = queryStr.replace(
+		/\b(gt|gte|lt|lte|in)\b/g,
+		match => `$${match}`
+	);
+
+	query = JSON.parse(queryStr);
+
+	if (req.query.select) {
+		const fields = req.query.select.split(',').join(' ');
+		return Bootcamp.find(query)
+			.select(fields)
+			.then(data => {
+				res.status(200).json({
+					success: true,
+					count: data.length,
+					data: data,
+				});
+			})
+			.catch(err => {
+				next(err);
+			});
+	}
+
+	Bootcamp.find(query)
+		.select(fields)
 		.then(data => {
 			res.status(200).json({
 				success: true,
