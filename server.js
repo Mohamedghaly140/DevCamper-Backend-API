@@ -23,9 +23,11 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes Files
 const bootcampsRoutes = require('./routes/bootcamps');
+const coursesRoutes = require('./routes/courses');
 
 // Routes
 app.use('/api/v1/bootcamps', bootcampsRoutes);
+app.use('/api/v1/courses', coursesRoutes);
 
 // Error Handler
 app.use(error);

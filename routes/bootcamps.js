@@ -11,6 +11,12 @@ const {
 	getBootcampsInRadius,
 } = require('../controllers/bootcamps');
 
+// Include other resource routers
+const courseRouter = require('./courses');
+
+// Re-route into other resouce router
+router.use('/:bootcampId/courses', courseRouter);
+
 router.get('/', getBootcamps);
 
 router.get('/:id', getBootcamp);
