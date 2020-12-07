@@ -1,5 +1,6 @@
-const Course = require('../models/Course');
 const ErrorResponse = require('../utils/ErrorResponse');
+const Course = require('../models/Course');
+const Bootcamp = require('../models/Bootcamp');
 
 // @desc     Get all bootcamps
 // @route    GET /api/v1/courses
@@ -20,6 +21,10 @@ exports.getCourses = (req, res, next) => {
 			});
 	} else {
 		Course.find()
+			.populate({
+				path: 'bootcamp',
+				select: 'name description',
+			})
 			.then(data => {
 				res.status(200).json({
 					success: true,
@@ -31,4 +36,64 @@ exports.getCourses = (req, res, next) => {
 				next(err);
 			});
 	}
+};
+
+// @desc     Get single course
+// @route    GET /api/v1/courses
+// @access   Public
+exports.getCourse = (req, res, next) => {
+	const courseId = req.params.id;
+	Course.findById(courseId)
+		.populate({
+			path: 'bootcamp',
+			select: 'name description',
+		})
+		.then(data => {
+			if (!data) {
+				return next(
+					new ErrorResponse(
+						`No course with the id of ${req.params.id} match any courses in database`,
+						404
+					)
+				);
+			}
+			res.status(200).json({
+				success: true,
+				data: data,
+			});
+		})
+		.catch(err => {
+			next(err);
+		});
+};
+
+// @desc     Add single course
+// @route    POST /api/v1/courses
+// @route    POST /api/v1/bootcamps/:bootcampId/courses
+// @access   Private
+exports.addCourse = (req, res, next) => {
+	req.body.bootcamp = req.params.bootcampId;
+
+	Bootcamp.findById(req.params.bootcampId)
+		.then(data => {
+			if (!data) {
+				return next(
+					new ErrorResponse(
+						`No bootcamo with the id of ${req.params.id} match any bootcamps in database`,
+						404
+					)
+				);
+			}
+
+			return Course.create(req.body);
+		})
+		.then(data => {
+			res.status(201).json({
+				success: true,
+				data: data,
+			});
+		})
+		.catch(err => {
+			next(err);
+		});
 };

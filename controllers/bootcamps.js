@@ -29,6 +29,7 @@ exports.getBootcamps = (req, res, next) => {
 	if (req.query.select) {
 		const fields = req.query.select.split(',').join(' ');
 		return Bootcamp.find(query)
+			.populate('courses')
 			.select(fields)
 			.then(data => {
 				res.status(200).json({
@@ -43,7 +44,7 @@ exports.getBootcamps = (req, res, next) => {
 	}
 
 	Bootcamp.find(query)
-		.select(fields)
+		.populate('courses')
 		.then(data => {
 			res.status(200).json({
 				success: true,
