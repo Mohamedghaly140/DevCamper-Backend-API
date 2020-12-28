@@ -129,24 +129,33 @@ exports.updateCourse = (req, res, next) => {
 // @desc     Delete course
 // @route    DELETE /api/v1/courses/:id
 // @access   Private
-exports.deleteCourse = (req, res, next) => {
+exports.deleteCourse = async (req, res, next) => {
 	const courseId = req.params.id;
-	Course.remove({ _id: courseId })
-		.then(data => {
-			if (!data) {
-				return next(
-					new ErrorResponse(
-						`No course with the id of ${req.params.id} match any courses in database`,
-						404
-					)
-				);
-			}
-			res.status(200).json({
-				success: true,
-				message: 'Course deleted succsfuly',
-			});
-		})
-		.catch(err => {
-			next(err);
-		});
+
+	let course;
+	try {
+		course = await Course.findById(courseId);
+
+		if (!course) {
+			return next(
+				new ErrorResponse(
+					`No course with the id of ${req.params.id} match any courses in database`,
+					404
+				)
+			);
+		}
+	} catch (err) {
+		next(err);
+	}
+
+	try {
+		await course.remove();
+	} catch (err) {
+		next(err);
+	}
+
+	res.status(200).json({
+		success: true,
+		message: 'Course deleted succsfuly',
+	});
 };
