@@ -97,3 +97,56 @@ exports.addCourse = (req, res, next) => {
 			next(err);
 		});
 };
+
+// @desc     Update course
+// @route    PUT /api/v1/courses/:id
+// @access   Private
+exports.updateCourse = (req, res, next) => {
+	const courseId = req.params.id;
+	Course.findByIdAndUpdate(courseId, req.body, {
+		new: true,
+		runValidators: true,
+	})
+		.then(data => {
+			if (!data) {
+				return next(
+					new ErrorResponse(
+						`No course with the id of ${req.params.id} match any courses in database`,
+						404
+					)
+				);
+			}
+			res.status(200).json({
+				success: true,
+				data: data,
+			});
+		})
+		.catch(err => {
+			next(err);
+		});
+};
+
+// @desc     Delete course
+// @route    DELETE /api/v1/courses/:id
+// @access   Private
+exports.deleteCourse = (req, res, next) => {
+	const courseId = req.params.id;
+	Course.remove({ _id: courseId })
+		.then(data => {
+			if (!data) {
+				return next(
+					new ErrorResponse(
+						`No course with the id of ${req.params.id} match any courses in database`,
+						404
+					)
+				);
+			}
+			res.status(200).json({
+				success: true,
+				message: 'Course deleted succsfuly',
+			});
+		})
+		.catch(err => {
+			next(err);
+		});
+};
